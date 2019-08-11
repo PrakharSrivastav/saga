@@ -1,0 +1,6 @@
+github.com/machinebox/remoto v0.0.0-20190211134137-5964bca8b8d5 h1:7Q2Bgw5PmH4j593DEbShgj6S75rCWV+kk2SdMzUxzfo=
+github.com/machinebox/remoto v0.0.0-20190211134137-5964bca8b8d5/go.mod h1:CGm5D1oUqwyXmSwaevRbLUKZNAqSaRA3kz1RJ2zWKv8=
+github.com/matryer/is v1.2.0 h1:92UTHpy8CDwaJ08GqLDzhhuixiBUUD1p3AU6PHddz4A=
+github.com/matryer/is v1.2.0/go.mod h1:2fLPjFQM9rhQ15aVEtbuwhJinnOqrmgXPNdZsdwlWXA=
+github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
+github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
