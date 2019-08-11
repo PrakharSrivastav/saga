@@ -1,4 +1,4 @@
-module github.com/PrakharSrivastav/saga/stub/orchestrator/client
+module github.com/PrakharSrivastav/saga/service/client
 
 require (
 	github.com/machinebox/remoto v0.0.0-20190211134137-5964bca8b8d5

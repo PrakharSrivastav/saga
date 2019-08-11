@@ -6,8 +6,8 @@
     </buildTags>
   </component>
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/.idea" />
+    <content url="file://$MODULE_DIR$/../saga">
+      <excludeFolder url="file://$MODULE_DIR$/../saga/.idea" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

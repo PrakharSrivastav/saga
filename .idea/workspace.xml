@@ -2,30 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f21cbdca-518c-4411-b317-a8da468b08a2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/orchestrator.remoto.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/service.remoto.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stub/orchestrator/client/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stub/orchestrator/client/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stub/orchestrator/server/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stub/orchestrator/server/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stub/service/client/client.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stub/service/client/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stub/service/client/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stub/service/server/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stub/service/server/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stub/service/server/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/saga.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/saga.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Service.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/delivery/service.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/orchestrator/api.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/orchestrator/go.mod" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/order/service.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/payment/service.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/restaurant/service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../saga/.idea/saga.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../saga/.idea/saga.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../saga/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../saga/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -42,7 +20,7 @@
   </component>
   <component name="GOROOT" path="/usr/local/go" />
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../saga" />
   </component>
   <component name="IgnoredFileRootStore">
     <option name="generatedRoots">
@@ -52,6 +30,7 @@
     </option>
   </component>
   <component name="ProjectId" id="1PFr5hWZ9XHUsko7eCYmMu3S9tT" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -66,7 +45,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="go.sdk" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -111,6 +90,11 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$" />
+    </ignored-roots>
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
