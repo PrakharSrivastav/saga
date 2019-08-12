@@ -13,6 +13,7 @@ food delivery service.
 
 **Note**: We use redis pub/sub feature to simulate a publish-subscribe infrastructure.
 
+![](uml/use_case_v2.png)
 
 ## Redis channels
 |direction  | name  | service| valid messages|

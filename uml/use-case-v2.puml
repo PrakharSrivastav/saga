@@ -1,6 +1,5 @@
 @startuml
 start
-(O)
 :Order Orchestrator;
 
 fork
@@ -17,11 +16,9 @@ fork again
 	:process;
 end fork
 if (OK) then
-   :SuccessFeedback;
-   (O)
+   :Done;
 else
-   :ErrorFeedback;
-   (O)
+   :Error;
    detach
 endif
 stop
