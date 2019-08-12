@@ -27,6 +27,8 @@ food delivery service.
 run the below commands in sequence in different terminal from project root
 ```bash
 # terminal 1
+go get -u "github.com/go-redis/redis"
+go get -u "syreclabs.com/go/faker"
 docker-compose up -d 
 # terminal 2
 go run orchestrator/main.go 
@@ -39,3 +41,10 @@ go run restaurant/main.go
 # terminal 6
 go run delivery/main.go
 ```
+
+To create an order open browser and open [http://localhost:8080/create](http://localhost:8080/create)
+Once the order is submitted, observe the logs on each terminal.
+
+To demostrate rollback, the delivery service errors out, thereby rolling back the entire transaction.
+
+The users should observe the same transaction-id on all the terminals.
