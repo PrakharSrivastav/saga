@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,11 +17,32 @@ const (
 	RestaurantChannel string = "RestaurantChannel"
 	ReplyChannel      string = "ReplyChannel"
 
-	StartMsg    string = "Start"
-	DoneMsg     string = "DoneMsg"
-	ErrorMsg    string = "ErrorMsg"
-	RollbackMsg string = "CreateMsg"
+	ServicePayment    string = "Payment"
+	ServiceOrder      string = "Order"
+	ServiceRestaurant string = "Restaurant"
+	ServiceDelivery   string = "Delivery"
+
+	ActionStart    string = "Start"
+	ActionDone     string = "DoneMsg"
+	ActionError    string = "ErrorMsg"
+	ActionRollback string = "RollbackMsg"
 )
+
+type Message struct {
+	ID      string `json:"id"`
+	Service string `json:"service"`
+	Action  string `json:"action"`
+	Message string `json:"message"`
+}
+
+func (m Message) MarshalBinary() ([]byte, error) {
+	return json.Marshal(m)
+}
+
+type Orchestrator struct {
+	c *redis.Client
+	r *redis.PubSub
+}
 
 func main() {
 	var err error
@@ -42,29 +64,15 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
 
-type Orchestrator struct {
-	c *redis.Client
-	r *redis.PubSub
-}
-
 func (o Orchestrator) create(writer http.ResponseWriter, request *http.Request) {
 	if _, err := fmt.Fprintf(writer, "responding"); err != nil {
 		log.Printf("error while writing %s", err.Error())
 	}
-	o.send()
-}
-
-func (o Orchestrator) send() {
-	transactionID := faker.Bitcoin().Address()
-	if err := o.c.Publish(OrderChannel, struct {
-		TransactionId string `json:"transaction_id"`
-		MsgType       string `json:"msg_type"`
-	}{
-		TransactionId: transactionID,
-		MsgType:       StartMsg,
-	}).Err(); err != nil {
-		log.Printf("error publishing to the channel %s\n", err)
+	m := Message{
+		ID:      faker.Bitcoin().Address(),
+		Message: "Something",
 	}
+	o.next(OrderChannel, ServiceOrder, m)
 }
 
 func (o Orchestrator) start() {
@@ -74,10 +82,71 @@ func (o Orchestrator) start() {
 
 	ch := o.r.Channel()
 	log.Println("starting the redis client")
+	defer o.r.Close()
 	for {
 		select {
 		case msg := <-ch:
-			log.Printf("message is %v \n", msg)
+			m := Message{}
+			err := json.Unmarshal([]byte(msg.Payload), &m)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+
+			// only process the messages on ReplyChannel
+			switch msg.Channel {
+			case ReplyChannel:
+				// if there is any error, just rollback
+				if m.Action != ActionDone {
+					log.Printf("Rolling back transaction with id %s", m.ID)
+					o.rollback(m)
+					continue
+				}
+
+				// else start the next stage
+				switch m.Service {
+				case ServiceOrder:
+					o.next(PaymentChannel, ServicePayment, m)
+				case ServicePayment:
+					o.next(RestaurantChannel, ServiceRestaurant, m)
+				case ServiceRestaurant:
+					o.next(DeliveryChannel, ServiceDelivery, m)
+				case ServiceDelivery:
+					log.Println("Food Delivered")
+				}
+			}
 		}
 	}
+}
+
+func (o Orchestrator) next(channel, service string, message Message) {
+	var err error
+	message.Action = ActionStart
+	message.Service = service
+	if err = o.c.Publish(channel, message).Err(); err != nil {
+		log.Printf("error publishing start-message to %s channel", channel)
+	}
+	log.Printf("start message published to channel :%s", channel)
+}
+
+func (o Orchestrator) rollback(m Message) {
+	var err error
+	message := Message{
+		ID:      m.ID,
+		Action:  ActionRollback,
+		Message: "May day !! May day!!",
+	}
+	if err = o.c.Publish(OrderChannel, message).Err(); err != nil {
+		log.Printf("error publishing rollback message to %s channel", OrderChannel)
+	}
+	if err = o.c.Publish(PaymentChannel, message).Err(); err != nil {
+		log.Printf("error publishing rollback message to %s channel", PaymentChannel)
+	}
+	if err = o.c.Publish(RestaurantChannel, message).Err(); err != nil {
+		log.Printf("error publishing rollback message to %s channel", RestaurantChannel)
+	}
+	if err = o.c.Publish(DeliveryChannel, message).Err(); err != nil {
+		log.Printf("error publishing rollback message to %s channel", DeliveryChannel)
+	}
+
 }
