@@ -1,0 +1,57 @@
+@startuml
+left to right direction
+skinparam componentStyle uml2
+skinparam component {
+  FontSize 13
+  FontName Courier
+  BorderColor black
+  BackgroundColor gold
+  ArrowFontName Impact
+  ArrowColor #FF6655
+  ArrowFontColor #777777
+}
+
+frame "order-placement-process" {
+   component [order-service] as o
+   component [payment-service] as p
+   component [restaurant-service] as r
+   component [delivery-service] as d
+}
+
+frame "message-queue" {
+    component Order as O
+    component Payment as P
+    component Restaurant as R
+    component Delivery as D
+    component Rollback as RB
+}
+
+frame Actor {
+    actor orchestrator as or
+}
+
+User -> or : Places Food Order for Delivery
+
+or - O : "CreateOrder"
+O .> o : "CreateOrder"
+o -> O : "OrderCreated"
+O .> or : "OrderCreated"
+
+
+or -> P : "CreatePrder"
+P .> p : "CreatePrder"
+p -> P : "PrderCreated"
+P .> or : "OrderCreated"
+
+
+or -> R : "CreateRrder"
+R .> r : "CreateRrder"
+r -> R : "RrderCreated"
+R .> or : "OrderCreated"
+
+
+or -> D : "CreateDrder"
+D .> d : "CreateDrder"
+d -> D : "DrderCreated"
+D .> or : "OrderCreated"
+@enduml

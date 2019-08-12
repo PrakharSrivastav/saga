@@ -1,0 +1,29 @@
+@startuml
+start
+(O)
+:Order Orchestrator;
+
+fork
+    :Order Service;
+	:process;
+fork again
+	:Payment Service;
+	:process;
+fork again
+	:Restaurant Service;
+	:process;
+fork again
+	:Delivery Service;
+	:process;
+end fork
+if (OK) then
+   :SuccessFeedback;
+   (O)
+else
+   :ErrorFeedback;
+   (O)
+   detach
+endif
+stop
+
+@enduml
