@@ -16,18 +16,17 @@ const (
 	DeliveryChannel   string = "DeliveryChannel"
 	RestaurantChannel string = "RestaurantChannel"
 	ReplyChannel      string = "ReplyChannel"
-
 	ServicePayment    string = "Payment"
 	ServiceOrder      string = "Order"
 	ServiceRestaurant string = "Restaurant"
 	ServiceDelivery   string = "Delivery"
-
-	ActionStart    string = "Start"
-	ActionDone     string = "DoneMsg"
-	ActionError    string = "ErrorMsg"
-	ActionRollback string = "RollbackMsg"
+	ActionStart       string = "Start"
+	ActionDone        string = "DoneMsg"
+	ActionError       string = "ErrorMsg"
+	ActionRollback    string = "RollbackMsg"
 )
 
+// Message represents the payload sent over redis pub/sub
 type Message struct {
 	ID      string `json:"id"`
 	Service string `json:"service"`
@@ -35,10 +34,12 @@ type Message struct {
 	Message string `json:"message"`
 }
 
+// MarshalBinary should be implemented to send message to redis
 func (m Message) MarshalBinary() ([]byte, error) {
 	return json.Marshal(m)
 }
 
+// Orchestrator orchestrates the order processing task
 type Orchestrator struct {
 	c *redis.Client
 	r *redis.PubSub
@@ -46,50 +47,53 @@ type Orchestrator struct {
 
 func main() {
 	var err error
-	mux := http.NewServeMux()
+	// create client and ping redis
 	client := redis.NewClient(&redis.Options{Addr: "localhost:6379", Password: "", DB: 0})
 	if _, err = client.Ping().Result(); err != nil {
 		log.Fatalf("error creating redis client %s", err)
 	}
 
+	// initialize and start the orchestrator in the background
 	o := &Orchestrator{
 		c: client,
 		r: client.Subscribe(PaymentChannel, OrderChannel, DeliveryChannel, RestaurantChannel, ReplyChannel),
 	}
 	go o.start()
 
+	// define ServeMux and start the server
+	mux := http.NewServeMux()
 	mux.HandleFunc("/create", o.create)
 	log.Println("starting server")
 
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
 
+// create the order - step 1 in the order processing pipeline
 func (o Orchestrator) create(writer http.ResponseWriter, request *http.Request) {
 	if _, err := fmt.Fprintf(writer, "responding"); err != nil {
 		log.Printf("error while writing %s", err.Error())
 	}
-	m := Message{
-		ID:      faker.Bitcoin().Address(),
-		Message: "Something",
-	}
+	m := Message{ID: faker.Bitcoin().Address(), Message: "Something"}
 	o.next(OrderChannel, ServiceOrder, m)
 }
 
+// start the goroutine to orchestrate the process
 func (o Orchestrator) start() {
-	if _, err := o.r.Receive(); err != nil {
+	var err error
+	if _, err = o.r.Receive(); err != nil {
 		log.Fatalf("error setting up redis %s \n", err)
 	}
-
 	ch := o.r.Channel()
-	log.Println("starting the redis client")
 	defer o.r.Close()
+
+	log.Println("starting the redis client")
 	for {
 		select {
 		case msg := <-ch:
 			m := Message{}
-			err := json.Unmarshal([]byte(msg.Payload), &m)
-			if err != nil {
+			if err = json.Unmarshal([]byte(msg.Payload), &m); err != nil {
 				log.Println(err)
+				// continue to skip bad messages
 				continue
 			}
 
@@ -119,6 +123,8 @@ func (o Orchestrator) start() {
 	}
 }
 
+// next triggers start operation on the other micro-services
+// based on the channel and service
 func (o Orchestrator) next(channel, service string, message Message) {
 	var err error
 	message.Action = ActionStart
@@ -129,10 +135,11 @@ func (o Orchestrator) next(channel, service string, message Message) {
 	log.Printf("start message published to channel :%s", channel)
 }
 
+// rollback instructs the other micro-services to rollback the transaction
 func (o Orchestrator) rollback(m Message) {
 	var err error
 	message := Message{
-		ID:      m.ID,
+		ID:      m.ID, // ID is mandatory
 		Action:  ActionRollback,
 		Message: "May day !! May day!!",
 	}
@@ -148,5 +155,4 @@ func (o Orchestrator) rollback(m Message) {
 	if err = o.c.Publish(DeliveryChannel, message).Err(); err != nil {
 		log.Printf("error publishing rollback message to %s channel", DeliveryChannel)
 	}
-
 }

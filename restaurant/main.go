@@ -11,13 +11,13 @@ import (
 const (
 	RestaurantChannel string = "RestaurantChannel"
 	ReplyChannel      string = "ReplyChannel"
-
-	ActionStart    string = "Start"
-	ActionDone     string = "DoneMsg"
-	ActionError    string = "ErrorMsg"
-	ActionRollback string = "RollbackMsg"
+	ActionStart       string = "Start"
+	ActionDone        string = "DoneMsg"
+	ActionError       string = "ErrorMsg"
+	ActionRollback    string = "RollbackMsg"
 )
 
+// Message represents the payload sent over redis pub/sub
 type Message struct {
 	ID      string `json:"id"`
 	Service string `json:"service"`
@@ -25,6 +25,7 @@ type Message struct {
 	Message string `json:"message"`
 }
 
+// MarshalBinary should be implemented to send message to redis
 func (m Message) MarshalBinary() ([]byte, error) {
 	return json.Marshal(m)
 }
@@ -41,7 +42,6 @@ func main() {
 		log.Fatalf("error subscribing %s", err)
 	}
 	defer pubsub.Close()
-
 	ch := pubsub.Channel()
 	log.Println("starting the restaurant service")
 	for {
@@ -57,9 +57,11 @@ func main() {
 			switch msg.Channel {
 			case RestaurantChannel:
 				log.Printf("recieved message with id %s ", m.ID)
+				// random sleep to simulate some work in action
 				d := faker.RandomInt(1, 3)
 				time.Sleep(time.Duration(d) * time.Second)
 
+				// Happy Flow
 				if m.Action == ActionStart {
 					m.Action = ActionDone
 					if err = client.Publish(ReplyChannel, m).Err(); err != nil {
@@ -68,6 +70,7 @@ func main() {
 					log.Printf("done message published to channel :%s", ReplyChannel)
 				}
 
+				// Rollback flow
 				if m.Action == ActionRollback {
 					log.Printf("rolling back transaction with ID :%s", m.ID)
 				}
