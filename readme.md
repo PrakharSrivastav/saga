@@ -15,6 +15,10 @@ food delivery service.
 
 ![](uml/use_case_v2.png)
 
+
+
+![](uml/saga.png)
+
 ## Redis channels
 |direction  | name  | service| valid messages|
 |---|---|----|---|
