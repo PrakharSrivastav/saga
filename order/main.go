@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/go-redis/redis"
 	"log"
-	"syreclabs.com/go/faker"
 	"time"
+
+	"github.com/go-redis/redis"
+	"syreclabs.com/go/faker"
 )
 
 const (
