@@ -84,7 +84,7 @@ func (o Orchestrator) start() {
 		log.Fatalf("error setting up redis %s \n", err)
 	}
 	ch := o.r.Channel()
-	defer o.r.Close()
+	defer func() { _ = o.r.Close() }()
 
 	log.Println("starting the redis client")
 	for {

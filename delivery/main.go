@@ -44,7 +44,7 @@ func main() {
 	if _, err = pubsub.Receive(); err != nil {
 		log.Fatalf("error subscribing %s", err)
 	}
-	defer pubsub.Close()
+	defer func() { _ = pubsub.Close() }()
 
 	ch := pubsub.Channel()
 	log.Println("starting the delivery service")
