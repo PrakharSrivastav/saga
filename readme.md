@@ -13,10 +13,6 @@ food delivery service.
 
 **Note**: We use redis pub/sub feature to simulate a publish-subscribe infrastructure.
 
-![](uml/use_case_v2.png)
-
-
-
 ![](uml/saga.png)
 
 ## Redis channels
@@ -34,15 +30,21 @@ run the below commands in sequence in different terminal from project root
 # terminal 1
 go get -u "github.com/go-redis/redis"
 go get -u "syreclabs.com/go/faker"
+# bring up the redis services
 docker-compose up -d 
+
 # terminal 2
 go run orchestrator/main.go 
+
 # terminal 3
 go run order/main.go
+
 # terminal 4
 go run payment/main.go
+
 # terminal 5
 go run restaurant/main.go
+
 # terminal 6
 go run delivery/main.go
 ```
